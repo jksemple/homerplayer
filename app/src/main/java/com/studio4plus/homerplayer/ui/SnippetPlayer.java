@@ -10,7 +10,7 @@ import com.studio4plus.homerplayer.player.Player;
 
 import java.io.File;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * Plays the current audiobook for a short amount of time. Just to demonstrate.

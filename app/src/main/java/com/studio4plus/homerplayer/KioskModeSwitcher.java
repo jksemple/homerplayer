@@ -17,7 +17,7 @@ import com.studio4plus.homerplayer.ui.MainActivity;
 
 import javax.inject.Inject;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
 
 @ApplicationScope
 public class KioskModeSwitcher {

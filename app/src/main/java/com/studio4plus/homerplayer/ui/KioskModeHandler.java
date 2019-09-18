@@ -11,7 +11,8 @@ import com.studio4plus.homerplayer.events.KioskModeChanged;
 
 import javax.inject.Inject;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 @ActivityScope
 public class KioskModeHandler {
@@ -50,7 +51,7 @@ public class KioskModeHandler {
         setUiFlagsAndLockTask();
     }
 
-    @SuppressWarnings("unused")
+    @Subscribe
     public void onEvent(KioskModeChanged event) {
         if (event.type == KioskModeChanged.Type.FULL)
             lockTask(event.isEnabled);

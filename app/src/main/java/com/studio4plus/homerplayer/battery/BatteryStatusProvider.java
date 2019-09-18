@@ -12,7 +12,7 @@ import com.studio4plus.homerplayer.events.BatteryStatusChangeEvent;
 
 import javax.inject.Inject;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
 
 public class BatteryStatusProvider extends BroadcastReceiver {
 

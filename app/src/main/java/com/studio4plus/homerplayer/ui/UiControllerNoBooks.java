@@ -26,7 +26,7 @@ import com.studio4plus.homerplayer.events.DemoSamplesInstallationStartedEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
 
 public class UiControllerNoBooks {
 

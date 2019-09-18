@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
 
 public class PlaybackService
         extends Service

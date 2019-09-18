@@ -16,7 +16,8 @@ import com.studio4plus.homerplayer.concurrency.SimpleFuture;
 
 import javax.inject.Inject;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 public class UiControllerBookList {
 
@@ -125,12 +126,12 @@ public class UiControllerBookList {
         speak(audioBookManager.getById(bookId).getTitle());
     }
 
-    @SuppressWarnings("UnusedDeclaration")
+    @Subscribe
     public void onEvent(AudioBooksChangedEvent event) {
         updateAudioBooks();
     }
 
-    @SuppressWarnings("UnusedDeclaration")
+    @Subscribe
     public void onEvent(CurrentBookChangedEvent event) {
         ui.updateCurrentBook(audioBookManager.getCurrentBookIndex());
     }

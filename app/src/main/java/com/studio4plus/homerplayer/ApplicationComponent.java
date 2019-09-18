@@ -28,7 +28,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Component;
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
 
 @Singleton
 @ApplicationScope

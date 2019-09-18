@@ -23,7 +23,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 @ApplicationScope
 public class AudioBookManager {
@@ -43,7 +44,7 @@ public class AudioBookManager {
         eventBus.register(this);
     }
 
-    @SuppressWarnings("UnusedDeclaration")
+    @Subscribe
     @MainThread
     public void onEvent(MediaStoreUpdateEvent ignored) {
         scanFiles();

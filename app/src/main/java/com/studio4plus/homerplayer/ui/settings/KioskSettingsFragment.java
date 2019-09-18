@@ -18,7 +18,8 @@ import com.studio4plus.homerplayer.events.DeviceAdminChangeEvent;
 
 import javax.inject.Inject;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 public class KioskSettingsFragment extends BaseSettingsFragment {
 
@@ -82,7 +83,7 @@ public class KioskSettingsFragment extends BaseSettingsFragment {
         return R.string.pref_kiosk_mode_screen_title;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
+    @Subscribe
     public void onEvent(DeviceAdminChangeEvent deviceAdminChangeEvent) {
         updateUnregisterDeviceOwner(deviceAdminChangeEvent.isEnabled);
     }

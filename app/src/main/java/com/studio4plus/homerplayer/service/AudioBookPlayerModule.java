@@ -6,7 +6,7 @@ import com.studio4plus.homerplayer.player.Player;
 
 import dagger.Module;
 import dagger.Provides;
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
 
 @Module
 public class AudioBookPlayerModule {

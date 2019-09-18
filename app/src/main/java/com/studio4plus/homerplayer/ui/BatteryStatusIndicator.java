@@ -12,7 +12,8 @@ import com.studio4plus.homerplayer.events.BatteryStatusChangeEvent;
 
 import java.util.EnumMap;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 public class BatteryStatusIndicator {
 
@@ -39,7 +40,7 @@ public class BatteryStatusIndicator {
     public BatteryStatusIndicator(ImageView indicatorView, EventBus eventBus) {
         this.indicatorView = indicatorView;
         this.eventBus = eventBus;
-        this.eventBus.registerSticky(this);
+        this.eventBus.register(this);
     }
 
     public void startAnimations() {
@@ -68,7 +69,7 @@ public class BatteryStatusIndicator {
         }
     }
 
-    @SuppressWarnings("unused")
+    @Subscribe(sticky = true)
     public void onEvent(BatteryStatusChangeEvent batteryEvent) {
         updateBatteryStatus(batteryEvent.batteryStatus);
     }

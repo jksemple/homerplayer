@@ -16,7 +16,7 @@ import com.studio4plus.homerplayer.ui.SnippetPlayer;
 
 import javax.inject.Inject;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
 
 public class PlaybackSettingsFragment extends BaseSettingsFragment {
 

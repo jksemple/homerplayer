@@ -28,7 +28,8 @@ import com.studio4plus.homerplayer.service.PlaybackService;
 
 import javax.inject.Inject;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 public class UiControllerMain implements ServiceConnection {
 
@@ -102,18 +103,18 @@ public class UiControllerMain implements ServiceConnection {
         eventBus.unregister(this);
     }
 
-    @SuppressWarnings({"UnusedParameters", "UnusedDeclaration"})
+    @Subscribe
     public void onEvent(AudioBooksChangedEvent event) {
         currentState.onBooksChanged(this);
         maybeSetInitialState();
     }
 
-    @SuppressWarnings({"UnusedParameters", "UnusedDeclaration"})
+    @Subscribe
     public void onEvent(PlaybackStoppedEvent event) {
         currentState.onPlaybackStop(this);
     }
 
-    @SuppressWarnings({"UnusedDeclaration"})
+    @Subscribe
     public void onEvent(PlaybackFatalErrorEvent event) {
         mainUi.onPlaybackError(event.path);
     }

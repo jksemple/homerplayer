@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import com.studio4plus.homerplayer.events.CurrentBookChangedEvent;
 
+import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,7 +14,7 @@ import org.json.JSONTokener;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
 
 public class Storage implements AudioBook.UpdateObserver {
 
@@ -113,7 +114,7 @@ public class Storage implements AudioBook.UpdateObserver {
         return AUDIOBOOK_KEY_PREFIX + id;
     }
 
-    @SuppressWarnings("UnusedDeclaration")
+    @Subscribe
     public void onEvent(CurrentBookChangedEvent event) {
         writeCurrentAudioBook(event.audioBook.getId());
     }

@@ -10,7 +10,7 @@ import android.os.Build;
 
 import com.studio4plus.homerplayer.events.DeviceAdminChangeEvent;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
 
 public class HomerPlayerDeviceAdmin extends DeviceAdminReceiver {
 

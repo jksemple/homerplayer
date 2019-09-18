@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
 
 public class Player {
 

@@ -26,7 +26,7 @@ import com.studio4plus.homerplayer.ui.OrientationActivityDelegate;
 
 import javax.inject.Inject;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
 
 public class SettingsActivity
         extends AppCompatActivity

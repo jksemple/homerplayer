@@ -20,7 +20,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import de.greenrobot.event.EventBus;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 public class AnalyticsTracker {
     private static final String BOOKS_INSTALLED = "booksInstalled";
@@ -64,7 +65,7 @@ public class AnalyticsTracker {
         stats = new StatsLogger(context);
     }
 
-    @SuppressWarnings("unused")
+    @Subscribe
     public void onEvent(AudioBooksChangedEvent event) {
         if (event.contentType.supersedes(globalSettings.booksEverInstalled())) {
             Map<String, String> data = Collections.singletonMap(
@@ -74,17 +75,17 @@ public class AnalyticsTracker {
         globalSettings.setBooksEverInstalled(event.contentType);
     }
 
-    @SuppressWarnings("unused")
+    @Subscribe
     public void onEvent(SettingsEnteredEvent event) {
         globalSettings.setSettingsEverEntered();
     }
 
-    @SuppressWarnings("unused")
+    @Subscribe
     public void onEvent(DemoSamplesInstallationStartedEvent event) {
         stats.logEvent(SAMPLES_DOWNLOAD_STARTED);
     }
 
-    @SuppressWarnings("unused")
+    @Subscribe
     public void onEvent(DemoSamplesInstallationFinishedEvent event) {
         if (event.success) {
             stats.logEvent(SAMPLES_DOWNLOAD_SUCCESS);
@@ -94,13 +95,13 @@ public class AnalyticsTracker {
         }
     }
 
-    @SuppressWarnings("unused")
+    @Subscribe
     public void onEvent(PlaybackProgressedEvent event) {
         if (currentlyPlayed == null)
             currentlyPlayed = new CurrentlyPlayed(event.audioBook, System.nanoTime());
     }
 
-    @SuppressWarnings("unused")
+    @Subscribe
     public void onEvent(PlaybackStoppingEvent event) {
         if (currentlyPlayed != null) {
             Map<String, String> data = new TreeMap<>();
@@ -117,7 +118,7 @@ public class AnalyticsTracker {
         }
     }
 
-    @SuppressWarnings("unused")
+    @Subscribe
     public void onEvent(PlaybackErrorEvent event) {
         Map<String, String> data = new TreeMap<>();
         data.put(PLAYBACK_ERROR_MESSAGE_KEY, event.errorMessage);
