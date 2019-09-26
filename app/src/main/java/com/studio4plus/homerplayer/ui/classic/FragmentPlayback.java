@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
+//import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
@@ -33,18 +33,27 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import io.codetail.animation.ViewAnimationUtils;
+//import io.codetail.animation.ViewAnimationUtils;
 
 public class FragmentPlayback extends Fragment implements FFRewindTimer.Observer {
 
     private View view;
-    private Button stopButton;
+    private ImageButton stopButton;
     private ImageButton rewindButton;
     private ImageButton ffButton;
+    private ImageButton skipForwardButton;
+    private ImageButton skipBackwardButton;
+    private TextView bookTitle;
+    private TextView trackNumber;
+    private TextView trackTitle;
+    private TextView trackLength;
+    private TextView artist;
+
     private TextView elapsedTimeView;
+    private TextView totalLengthView;
     private TextView elapsedTimeRewindFFView;
     private RewindFFHandler rewindFFHandler;
-    private Animator elapsedTimeRewindFFViewAnimation;
+    //private Animator elapsedTimeRewindFFViewAnimation;
 
     private @Nullable UiControllerPlayback controller;
 
@@ -65,23 +74,34 @@ public class FragmentPlayback extends Fragment implements FFRewindTimer.Observer
             controller.stopPlayback();
         });
 
+        skipForwardButton = view.findViewById(R.id.skipForwardButton);
+        skipForwardButton.setOnClickListener(v -> {
+            Preconditions.checkNotNull(controller);
+            controller.skipForward();
+        });
+        skipBackwardButton = view.findViewById(R.id.skipBackwardButton);
+        skipBackwardButton.setOnClickListener(v -> {
+            Preconditions.checkNotNull(controller);
+            controller.skipBackward();
+        });
+        bookTitle = view.findViewById(R.id.bookTitle);
+        trackNumber = view.findViewById(R.id.trackNumber);
+        trackLength = view.findViewById(R.id.trackLength);
+        trackTitle = view.findViewById(R.id.trackTitle);
+        artist = view.findViewById(R.id.artist);
+
         elapsedTimeView = view.findViewById(R.id.elapsedTime);
+        totalLengthView = view.findViewById(R.id.totalLength);
         elapsedTimeRewindFFView = view.findViewById(R.id.elapsedTimeRewindFF);
 
-        elapsedTimeView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(
-                    View v,
-                    int left, int top, int right, int bottom,
-                    int oldLeft, int oldTop, int oldRight, int oldBottom) {
-                RelativeLayout.LayoutParams params =
-                        (RelativeLayout.LayoutParams) elapsedTimeRewindFFView.getLayoutParams();
-                params.leftMargin = left;
-                params.topMargin = top;
-                params.width = right - left;
-                params.height = bottom - top;
-                elapsedTimeRewindFFView.setLayoutParams(params);
-            }
+        elapsedTimeView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+            RelativeLayout.LayoutParams params =
+                    (RelativeLayout.LayoutParams) elapsedTimeRewindFFView.getLayoutParams();
+            params.leftMargin = left;
+            params.topMargin = top;
+            params.width = right - left;
+            params.height = bottom - top;
+            elapsedTimeRewindFFView.setLayoutParams(params);
         });
 
         rewindButton = view.findViewById(R.id.rewindButton);
@@ -98,9 +118,9 @@ public class FragmentPlayback extends Fragment implements FFRewindTimer.Observer
             return true;
         });
 
-        elapsedTimeRewindFFViewAnimation =
-                AnimatorInflater.loadAnimator(view.getContext(), R.animator.bounce);
-        elapsedTimeRewindFFViewAnimation.setTarget(elapsedTimeRewindFFView);
+        //elapsedTimeRewindFFViewAnimation =
+        //        AnimatorInflater.loadAnimator(view.getContext(), R.animator.bounce);
+        //elapsedTimeRewindFFViewAnimation.setTarget(elapsedTimeRewindFFView);
 
         return view;
     }
@@ -130,12 +150,36 @@ public class FragmentPlayback extends Fragment implements FFRewindTimer.Observer
         rewindFFHandler.onStopping();
     }
 
-    void onPlaybackProgressed(long playbackPositionMs) {
+    void onPlaybackProgressed(long playbackPositionMs)
+    {
+        //onTimerUpdated(playbackPositionMs, fileName);
         onTimerUpdated(playbackPositionMs);
         enableUiOnStart();
     }
 
-    void enableUiOnStart() {
+    void onPlaybackMetadataString(String tagId, String stringValue) {
+        switch(tagId) {
+            case "Book title":
+                bookTitle.setText(stringValue);
+                break;
+            case "Track title":
+                trackTitle.setText(stringValue);
+                break;
+            case "Artist":
+                artist.setText(getString(R.string.author, stringValue));
+                break;
+            case "Track":
+                trackNumber.setText(getString(R.string.trackTitle, stringValue));
+                break;
+            case "Length":
+                trackLength.setText(trackLength(Long.parseLong(stringValue)));
+                break;
+            case "Total length":
+                totalLengthView.setText(totalLength(Long.parseLong(stringValue)));
+                break;
+        }
+    }
+    private void enableUiOnStart() {
         rewindButton.setEnabled(true);
         ffButton.setEnabled(true);
     }
@@ -153,6 +197,19 @@ public class FragmentPlayback extends Fragment implements FFRewindTimer.Observer
 
         return getString(R.string.playback_elapsed_time, hours, minutes, seconds);
     }
+    private String totalLength(long elapsedMs) {
+        long hours = TimeUnit.MILLISECONDS.toHours(elapsedMs);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(elapsedMs) % 60;
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedMs) % 60;
+
+        return getString(R.string.playback_total_length, hours, minutes, seconds);
+    }
+    private String trackLength(long elapsedMs) {
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(elapsedMs) % 60;
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(elapsedMs) % 60;
+
+        return getString(R.string.track_length, minutes, seconds);
+    }
 
     private void showHintIfNecessary() {
         if (isResumed() && isVisible()) {
@@ -168,14 +225,15 @@ public class FragmentPlayback extends Fragment implements FFRewindTimer.Observer
     @Override
     public void onTimerUpdated(long displayTimeMs) {
         elapsedTimeView.setText(elapsedTime(displayTimeMs));
-        elapsedTimeRewindFFView.setText(elapsedTime(displayTimeMs));
+        //elapsedTimeRewindFFView.setText(elapsedTime(displayTimeMs));
+        //trackTitle.setText(fileName.replaceFirst("\\.(mp3)", ""));
     }
 
     @Override
     public void onTimerLimitReached() {
-        if (elapsedTimeRewindFFView.getVisibility() == View.VISIBLE) {
-            elapsedTimeRewindFFViewAnimation.start();
-        }
+        //if (elapsedTimeRewindFFView.getVisibility() == View.VISIBLE) {
+        // elapsedTimeRewindFFViewAnimation.start();
+        //}
     }
 
     void setController(@NonNull UiControllerPlayback controller) {
@@ -197,62 +255,67 @@ public class FragmentPlayback extends Fragment implements FFRewindTimer.Observer
         @Override
         public void onPressed(final View v, float x, float y) {
             Preconditions.checkNotNull(controller);
-            if (currentAnimator != null) {
-                currentAnimator.cancel();
-            }
+            //if (currentAnimator != null) {
+            //    currentAnimator.cancel();
+            //}
 
             final boolean isFF = (v == ffButton);
-            rewindOverlay.setVisibility(View.VISIBLE);
-            currentAnimator = createAnimation(v, x, y, true);
-            currentAnimator.addListener(new SimpleAnimatorListener() {
-                private boolean isCancelled = false;
+            //rewindOverlay.setVisibility(View.VISIBLE);
+            //currentAnimator = createAnimation(v, x, y, true);
+            //currentAnimator.addListener(new SimpleAnimatorListener() {
+            //    private boolean isCancelled = false;
 
-                @Override
-                public void onAnimationEnd(Animator animator) {
+            //    @Override
+            //    public void onAnimationEnd(Animator animator) {
 
-                    currentAnimator = null;
-                    if (!isCancelled)
-                        controller.startRewind(isFF, FragmentPlayback.this);
-                }
+            //        currentAnimator = null;
+            //        if (!isCancelled)
+            //            controller.startRewind(isFF, FragmentPlayback.this);
+            //    }
 
-                @Override
-                public void onAnimationCancel(Animator animator) {
-                    isCancelled = true;
-                    resumeFromRewind();
-                }
-            });
-            currentAnimator.start();
+            //    @Override
+            //    public void onAnimationCancel(Animator animator) {
+            //        isCancelled = true;
+            //       resumeFromRewind();
+            //   }
+            //});
+            //currentAnimator.start();
 
             controller.pauseForRewind();
+            controller.startRewind(isFF, FragmentPlayback.this);
             isRunning = true;
         }
 
         @Override
         public void onReleased(View v, float x, float y) {
-            if (currentAnimator != null) {
-                currentAnimator.cancel();
-                rewindOverlay.setVisibility(View.GONE);
-                currentAnimator = null;
-            } else {
-                currentAnimator = createAnimation(v, x, y, false);
-                currentAnimator.addListener(new SimpleAnimatorListener() {
-                    @Override
-                    public void onAnimationEnd(Animator animator) {
-                        rewindOverlay.setVisibility(View.GONE);
-                        currentAnimator = null;
-                    }
-                });
-                currentAnimator.start();
-                resumeFromRewind();
-            }
+            //if (currentAnimator != null) {
+            //    currentAnimator.cancel();
+            //    rewindOverlay.setVisibility(View.GONE);
+            //    currentAnimator = null;
+            //} else {
+            //    currentAnimator = createAnimation(v, x, y, false);
+            //    currentAnimator.addListener(new SimpleAnimatorListener() {
+            //        @Override
+            //        public void onAnimationEnd(Animator animator) {
+            //            rewindOverlay.setVisibility(View.GONE);
+            //            currentAnimator = null;
+            //        }
+            //    });
+            //    currentAnimator.start();
+            //    resumeFromRewind();
+            //}
+            resumeFromRewind();
         }
 
         void onPause() {
-            if (currentAnimator != null) {
-                // Cancelling the animation calls resumeFromRewind.
-                currentAnimator.cancel();
-                currentAnimator = null;
-            } else if (isRunning) {
+            //if (currentAnimator != null) {
+            //    // Cancelling the animation calls resumeFromRewind.
+            //    currentAnimator.cancel();
+            //    currentAnimator = null;
+            //} else if (isRunning) {
+            //    resumeFromRewind();
+            //}
+            if (isRunning) {
                 resumeFromRewind();
             }
         }
@@ -274,6 +337,7 @@ public class FragmentPlayback extends Fragment implements FFRewindTimer.Observer
             isRunning = false;
         }
 
+        /*
         private Animator createAnimation(View v, float x, float y, boolean reveal) {
             Rect viewRect = ViewUtils.getRelativeRect(commonParent, v);
             float startX = viewRect.left + x;
@@ -298,5 +362,6 @@ public class FragmentPlayback extends Fragment implements FFRewindTimer.Observer
 
             return animator;
         }
+        */
     }
 }

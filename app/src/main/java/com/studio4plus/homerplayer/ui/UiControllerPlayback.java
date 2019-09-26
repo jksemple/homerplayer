@@ -9,6 +9,7 @@ import android.util.Log;
 import com.crashlytics.android.Crashlytics;
 import com.google.common.base.Preconditions;
 import com.studio4plus.homerplayer.analytics.AnalyticsTracker;
+import com.studio4plus.homerplayer.events.PlaybackMetadataStringEvent;
 import com.studio4plus.homerplayer.events.PlaybackProgressedEvent;
 import com.studio4plus.homerplayer.events.PlaybackStoppingEvent;
 import com.studio4plus.homerplayer.model.AudioBook;
@@ -81,6 +82,8 @@ public class UiControllerPlayback {
 
     void startPlayback(@NonNull AudioBook book) {
         playbackService.startPlayback(book);
+        eventBus.post(new PlaybackMetadataStringEvent("Book title", book.getTitle() ) ); // Just in case there are no ID3 tags in this book.
+        eventBus.post(new PlaybackMetadataStringEvent("Total length", Long.toString(book.getTotalDurationMs())));
     }
 
     public void stopPlayback() {
@@ -88,6 +91,20 @@ public class UiControllerPlayback {
         playbackService.stopPlayback();
     }
 
+
+    public void skipForward() {
+        Crashlytics.log(Log.DEBUG, TAG, "UiControllerPlayback.skipForward");
+        pauseForRewind();
+        playbackService.skipForward();
+        resumeFromRewind();
+    }
+
+    public void skipBackward() {
+        Crashlytics.log(Log.DEBUG, TAG, "UiControllerPlayback.skipBackward");
+        pauseForRewind();
+        playbackService.skipBackward();
+        resumeFromRewind();
+    }
     @Subscribe
     public void onEvent(PlaybackStoppingEvent event) {
         ui.onPlaybackStopping();
@@ -96,6 +113,11 @@ public class UiControllerPlayback {
     @Subscribe
     public void onEvent(PlaybackProgressedEvent event) {
         ui.onPlaybackProgressed(event.playbackPositionMs);
+    }
+
+    @Subscribe
+    public void onEvent(PlaybackMetadataStringEvent event) {
+        ui.onPlaybackMetadataString(event.tagId, event.stringValue);
     }
 
     public void pauseForRewind() {

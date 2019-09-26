@@ -19,6 +19,7 @@ import com.studio4plus.homerplayer.GlobalSettings;
 import com.studio4plus.homerplayer.HomerPlayerApplication;
 import com.studio4plus.homerplayer.R;
 import com.studio4plus.homerplayer.events.PlaybackFatalErrorEvent;
+import com.studio4plus.homerplayer.events.PlaybackMetadataStringEvent;
 import com.studio4plus.homerplayer.events.PlaybackProgressedEvent;
 import com.studio4plus.homerplayer.events.PlaybackStoppedEvent;
 import com.studio4plus.homerplayer.events.PlaybackStoppingEvent;
@@ -157,6 +158,13 @@ public class PlaybackService
         onPlaybackEnded();
     }
 
+    public void skipForward() {
+        playbackInProgress.audioBook.advanceFile();
+    }
+
+    public void skipBackward() {
+        playbackInProgress.audioBook.goBackFile();
+    }
     @Override
     public void onFaceDownStill() {
         Crashlytics.log(Log.DEBUG, TAG, "PlaybackService.onFaceDownStill");
@@ -300,14 +308,21 @@ public class PlaybackService
             boolean hasMoreToPlay = audioBook.advanceFile();
             Crashlytics.log(Log.DEBUG, TAG, "PlaybackService.AudioBookPlayback.onPlaybackEnded: " +
                     (hasMoreToPlay ? "more to play" : "finished"));
+            /*
             if (hasMoreToPlay) {
                 AudioBook.Position position = audioBook.getLastPosition();
                 controller.start(position.file, position.seekPosition);
             } else {
                 audioBook.resetPosition();
-                PlaybackService.this.onPlaybackEnded();
-                controller.release();
+                //PlaybackService.this.onPlaybackEnded();
+                //controller.release();
             }
+            */
+            if (!hasMoreToPlay) {
+                audioBook.resetPosition();
+            }
+            AudioBook.Position position = audioBook.getLastPosition();
+            controller.start(position.file, position.seekPosition);
         }
 
         @Override
@@ -356,6 +371,7 @@ public class PlaybackService
             durationQueryInProgress = null;
             playbackInProgress = new AudioBookPlayback(
                     player, handler, audioBook, globalSettings.getJumpBackPreferenceMs());
+            eventBus.post(new PlaybackMetadataStringEvent("Total length", Long.toString(audioBook.getTotalDurationMs())));
         }
 
         @Override

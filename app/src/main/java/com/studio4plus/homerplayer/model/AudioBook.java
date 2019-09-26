@@ -68,8 +68,14 @@ public class AudioBook {
             return UNKNOWN_POSITION;
         }
     }
+    public String getLastPositionFileName() {
+        return fileSet.files[lastPosition.fileIndex].getName();
+    }
 
     public long getTotalDurationMs() {
+        if (totalDuration == 0) {
+            totalDuration = fileDurationSum(fileSet.files.length);
+        }
         return totalDuration;
     }
 
@@ -147,6 +153,14 @@ public class AudioBook {
         return hasMoreFiles;
     }
 
+    public boolean goBackFile() {
+        DebugUtil.verifyIsOnMainThread();
+        int newIndex = lastPosition.fileIndex > 0 ? lastPosition.fileIndex - 1 : 0;
+        lastPosition = new Position(newIndex, 0);
+        notifyUpdateObserver();
+
+        return true;
+    }
     List<Long> getFileDurations() {
         return fileDurations;
     }

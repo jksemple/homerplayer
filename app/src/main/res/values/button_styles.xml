@@ -8,6 +8,12 @@
         <item name="android:paddingRight">@dimen/buttonPaddingHoriz</item>
     </style>
 
+    <style name="buttonMoveOverlay" parent="ThemeOverlay.AppCompat">
+        <item name="colorAccent">@color/buttonMoveBackground</item>
+        <item name="colorButtonNormal">@color/buttonMoveBackground</item>
+        <item name="android:paddingLeft">@dimen/buttonPaddingHoriz</item>
+        <item name="android:paddingRight">@dimen/buttonPaddingHoriz</item>
+    </style>
     <style name="buttonStopOverlay" parent="ThemeOverlay.AppCompat">
         <item name="colorAccent">@color/buttonStopBackground</item>
         <item name="colorButtonNormal">@color/buttonStopBackground</item>

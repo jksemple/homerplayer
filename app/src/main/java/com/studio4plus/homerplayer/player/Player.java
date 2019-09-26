@@ -10,16 +10,23 @@ import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.mp3.Mp3Extractor;
+import com.google.android.exoplayer2.metadata.Metadata;
+import com.google.android.exoplayer2.metadata.id3.TextInformationFrame;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.TrackGroup;
+import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.FileDataSource;
 import com.google.android.exoplayer2.upstream.FileDataSourceFactory;
 import com.google.common.base.Preconditions;
 import com.studio4plus.homerplayer.events.PlaybackErrorEvent;
+import com.studio4plus.homerplayer.events.PlaybackMetadataStringEvent;
 
 import java.io.EOFException;
 import java.io.File;
@@ -107,6 +114,8 @@ public class Player {
             this.currentFile = currentFile;
             exoPlayer.setPlayWhenReady(true);
             prepareAudioFile(currentFile, startPositionMs);
+            // Post a temporary track title until we get the real ID3 one (if any)
+            eventBus.post(new PlaybackMetadataStringEvent("Track title", currentFile.getName().replaceFirst("\\.(mp3)", "")));
         }
 
         @Override
@@ -174,6 +183,50 @@ public class Player {
                 }
             }
             observer.onPlaybackError(currentFile);
+        }
+        @Override
+        public void onTimelineChanged(Timeline timeline, Object manifest, int reason) {
+
+        }
+        @Override
+        public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+            for (int i = 0; i < trackGroups.length; i++) {
+                TrackGroup trackGroup = trackGroups.get(i);
+                for (int j = 0; j < trackGroup.length; j++) {
+                    Metadata trackMetadata = trackGroup.getFormat(j).metadata;
+                    if (trackMetadata != null) {
+                        // Found something
+                        for(int k = 0; k < trackMetadata.length(); k++) {
+                            Metadata.Entry entry = trackMetadata.get(k);
+                            if (entry instanceof TextInformationFrame) {
+                                TextInformationFrame textEntry = (TextInformationFrame) entry;
+                                if (textEntry.value.length() > 0) {
+                                    switch (textEntry.id) { // http://id3.org/id3v2.3.0#Text_information_frames_-_details
+                                        case "TALB": // Album
+                                            eventBus.post(new PlaybackMetadataStringEvent("Book title", textEntry.value));
+                                            break;
+                                        case "TIT2": // Track title
+                                            eventBus.post(new PlaybackMetadataStringEvent("Track title", textEntry.value));
+                                            break;
+                                        case "TPE1": // Main performer
+                                            eventBus.post(new PlaybackMetadataStringEvent("Artist", textEntry.value));
+                                            break;
+                                        case "TPE2": // Group / Author ?
+                                            eventBus.post(new PlaybackMetadataStringEvent("Artist", textEntry.value));
+                                            break;
+                                        case "TRCK": // Track number
+                                            eventBus.post(new PlaybackMetadataStringEvent("Track", textEntry.value));
+                                            break;
+                                        case "TLEN": // Track length in millisecs
+                                            eventBus.post(new PlaybackMetadataStringEvent("Length", textEntry.value));
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void updateProgress() {

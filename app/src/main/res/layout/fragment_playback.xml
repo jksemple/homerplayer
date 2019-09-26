@@ -9,81 +9,210 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#008856"
-        android:paddingBottom="@dimen/bookListItemPaddingVertical"
+        android:background="#1A738A"
         android:paddingLeft="@dimen/bookListItemPaddingHoriz"
-        android:paddingRight="@dimen/bookListItemPaddingHoriz">
+        android:paddingRight="@dimen/bookListItemPaddingHoriz"
+        android:paddingBottom="@dimen/bookListItemPaddingVertical">
 
         <TextView
             android:id="@+id/elapsedTime"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="166dp"
+            android:layout_height="110dp"
             android:layout_above="@+id/buttons"
+            android:layout_below="@+id/artist"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="286dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="7dp"
             android:gravity="center"
             android:textColor="#ffffff"
-            android:textSize="@dimen/bookElapsedTimeTextSize"
+            android:textSize="36sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             tools:text="00:13:10" />
+
+        <TextView
+            android:id="@+id/totalLength"
+            android:layout_width="246dp"
+            android:layout_height="113dp"
+            android:layout_above="@+id/buttons"
+            android:layout_below="@+id/artist"
+            android:layout_alignParentStart="false"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="13dp"
+            android:layout_marginBottom="7dp"
+            android:layout_toEndOf="@id/elapsedTime"
+            android:gravity="center"
+            android:textColor="#ffffff"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="08:13:10" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/buttons"
-            android:layout_width="match_parent"
+            android:layout_width="715dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="0dp"
             android:gravity="center_horizontal"
             android:orientation="horizontal"
             tools:layout_editor_absoluteX="30dp"
             tools:layout_editor_absoluteY="327dp">
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/stopButton"
-                style="@style/buttonStartStop"
-                android:theme="@style/buttonStopOverlay"
+            <ImageButton
+                android:id="@+id/skipForwardButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="0dp"
-                android:layout_marginLeft="@dimen/buttonDistanceHoriz"
-                android:layout_marginRight="@dimen/buttonDistanceHoriz"
-                android:maxLines="1"
-                android:text="@string/button_stop"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/button"
+                android:contentDescription="@string/button_skip_forward"
+                android:src="@drawable/skip_forward"
+                android:theme="@style/buttonMoveOverlay"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_weight="1.5"
-                app:layout_constraintLeft_toRightOf="@+id/rewindButton"
-                app:layout_constraintRight_toLeftOf="@+id/fastForwardButton" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/fastForwardButton"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.appcompat.widget.AppCompatImageButton
+            <ImageButton
                 android:id="@+id/fastForwardButton"
-                android:theme="@style/buttonFFRewindOverlay"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginBottom="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginRight="@dimen/buttonDistanceHoriz"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/button"
                 android:contentDescription="@string/button_acc_fastforward"
                 android:src="@drawable/ff"
-                app:layout_constraintBottom_toBottomOf="@+id/stopButton"
-                app:layout_constraintHorizontal_weight="1"
-                app:layout_constraintLeft_toRightOf="@+id/stopButton"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/stopButton" />
+                android:theme="@style/buttonMoveOverlay"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/skipForwardButton"
+                app:layout_constraintStart_toEndOf="@+id/stopButton"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/rewindButton"
-                android:theme="@style/buttonFFRewindOverlay"
+            <ImageButton
+                android:id="@+id/stopButton"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginBottom="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginLeft="@dimen/buttonDistanceHoriz"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/stop_button"
+                android:contentDescription="@string/button_stop"
+                android:src="@drawable/stop"
+                android:theme="@style/buttonStopOverlay"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/fastForwardButton"
+                app:layout_constraintStart_toEndOf="@+id/rewindButton"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/rewindButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/button"
                 android:contentDescription="@string/button_acc_rewind"
                 android:src="@drawable/rewind"
-                app:layout_constraintBottom_toBottomOf="@+id/stopButton"
-                app:layout_constraintHorizontal_weight="1"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@+id/stopButton"
-                app:layout_constraintTop_toTopOf="@+id/stopButton" />
+                android:theme="@style/buttonMoveOverlay"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/stopButton"
+                app:layout_constraintHorizontal_bias="0.414"
+                app:layout_constraintStart_toEndOf="@+id/skipBackwardButton"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/skipBackwardButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/button"
+                android:contentDescription="@string/button_skip_backward"
+                android:src="@drawable/skip_back"
+                android:theme="@style/buttonMoveOverlay"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/rewindButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/bookTitle"
+            android:layout_width="715dp"
+            android:layout_height="97dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="4dp"
+            android:textColor="@android:color/white"
+            android:textSize="36sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="AMERICA Empire of Liberty Vol 2 Pride and Prejudice" />
+
+        <TextView
+            android:id="@+id/trackNumber"
+            android:layout_width="123dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/artist"
+            android:layout_alignBottom="@+id/artist"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp"
+            android:textColor="@android:color/white"
+            android:textSize="30sp"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Track 99" />
+
+        <TextView
+            android:id="@+id/trackLength"
+            android:layout_width="123dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/artist"
+            android:layout_alignBottom="@+id/artist"
+            android:layout_marginStart="41dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="0dp"
+            android:layout_toEndOf="@+id/trackNumber"
+            android:textColor="@android:color/white"
+            android:textSize="30sp"
+            tools:text="33:34" />
+
+        <TextView
+            android:id="@+id/trackTitle"
+            android:layout_width="715dp"
+            android:layout_height="101dp"
+            android:layout_below="@id/bookTitle"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            android:ems="10"
+            android:maxLines="3"
+            android:singleLine="false"
+            android:textColor="@android:color/white"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="Episode 43 What a load of title this track has. More than will fit onto one line" />
+
+        <TextView
+            android:id="@+id/artist"
+            android:layout_width="411dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/trackTitle"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="2dp"
+            android:layout_toEndOf="@id/trackLength"
+            android:textColor="@android:color/white"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="By: William Shakespeare" />
 
     </RelativeLayout>
 

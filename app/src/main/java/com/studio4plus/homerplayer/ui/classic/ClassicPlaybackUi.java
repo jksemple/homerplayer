@@ -65,6 +65,10 @@ public class ClassicPlaybackUi implements PlaybackUi {
 
         }
     }
+    @Override
+    public void onPlaybackMetadataString(String tagId, String stringValue){
+        fragment.onPlaybackMetadataString(tagId, stringValue);
+    }
 
     private static final EnumMap<SpeedLevel, Integer> SPEED_LEVEL_SOUND_RATE =
             new EnumMap<>(SpeedLevel.class);

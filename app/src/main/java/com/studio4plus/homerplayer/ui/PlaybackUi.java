@@ -14,6 +14,7 @@ public interface PlaybackUi {
     void initWithController(@NonNull UiControllerPlayback controller);
     void onPlaybackProgressed(long playbackPositionMs);
     void onPlaybackStopping();
+    void onPlaybackMetadataString(String tagId, String stringValue);
 
     /**
      * Notify that fast-forward/rewind is taking place and at what speed level.

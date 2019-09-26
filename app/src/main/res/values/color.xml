@@ -3,6 +3,7 @@
     <color name="buttonStartBackground">#ff008800</color>
     <color name="buttonStartPressedBackground">#ff33aa33</color>
     <color name="buttonStopBackground">#ffbb2200</color>
+    <color name="buttonMoveBackground">#FF9800</color>
     <color name="buttonStopPressedBackground">#ffdd5544</color>
     <color name="buttonFFRewindBackground">#2f459c</color>
     <color name="ffRewindFillBackground">@color/buttonFFRewindBackground</color>

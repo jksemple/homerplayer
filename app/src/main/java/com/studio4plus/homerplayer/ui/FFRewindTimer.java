@@ -51,7 +51,7 @@ public class FFRewindTimer implements Runnable {
     @Override
     public void run() {
         long now = SystemClock.uptimeMillis();
-        boolean keepRunning = update(now);
+        boolean keepRunning = update(now, "<...>");
 
         if (keepRunning) {
             long nextTickAt = lastTickAt + Math.max(Math.abs(speedMsPerS), MIN_TICK_INTERVAL_MS);
@@ -64,7 +64,7 @@ public class FFRewindTimer implements Runnable {
         handler.removeCallbacks(this);
     }
 
-    private boolean update(long now) {
+    private boolean update(long now, String trackTitle) {
         long elapsedMs = now - lastTickAt;
         displayTimeMs += (1000 * elapsedMs) / speedMsPerS;
 
